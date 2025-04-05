@@ -49,7 +49,7 @@ const Results = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-slate-900 to-slate-800 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-b from-slate-900 to-slate-800 dark:from-slate-950 dark:to-slate-900 flex items-center justify-center">
         <div className="text-white text-2xl">Analyzing your results...</div>
       </div>
     );
@@ -108,32 +108,42 @@ const Results = () => {
   ];
 
   // Format data for charts
-  const barChartData = domains.map(domain => ({
-    name: domain.name.split(" ").pop(), // Just use last word for brevity
-    score: domain.score
-  }));
+  const barChartData = [
+    { name: "DSA", score: results?.dsa || 0 },
+    { name: "OS", score: results?.os || 0 },
+    { name: "CN", score: results?.cn || 0 }
+  ];
 
-  const radarData = domains.flatMap(domain => 
-    domain.recommendedTopics.map(topic => ({
-      subject: topic.name,
-      score: topic.score
-    }))
-  );
+  const radarData = [
+    { subject: "Binary Trees", score: 30 },
+    { subject: "Dynamic Prog", score: 25 },
+    { subject: "Process Sched", score: 40 },
+    { subject: "Memory Mgmt", score: 30 },
+    { subject: "OSI Model", score: 65 },
+    { subject: "TCP/IP", score: 45 },
+  ];
 
   const pieData = [
-    { name: "Strong Areas", value: domains.filter(d => d.score >= 70).length },
-    { name: "Weak Areas", value: domains.filter(d => d.score < 70).length }
+    { name: "Strong Areas", value: Object.values(results || {}).filter(score => score >= 70).length },
+    { name: "Weak Areas", value: Object.values(results || {}).filter(score => score < 70).length }
   ];
 
   const COLORS = ["#4ade80", "#f87171"];
 
   // Find weakest domain
-  const weakestDomain = domains.reduce(
-    (prev, current) => (prev.score < current.score ? prev : current)
-  );
+  const weakestDomain = Object.entries(results || {})
+    .reduce((prev, [domain, score], i, arr) => {
+      return score < prev.score ? { domain, score } : prev;
+    }, { domain: "dsa", score: 100 });
+
+  const weakTopics: Record<Domain, string[]> = {
+    dsa: ["Binary Tree Traversal", "Dynamic Programming", "Graph Algorithms"],
+    os: ["Process Scheduling", "Memory Management", "Deadlocks"],
+    cn: ["TCP/IP Stack", "Network Security", "Subnetting"]
+  };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-900 to-slate-800 text-white">
+    <div className="min-h-screen bg-gradient-to-b from-slate-900 to-slate-800 dark:from-slate-950 dark:to-slate-900 text-white">
       {/* Animated background pattern */}
       <div className="absolute inset-0 overflow-hidden opacity-5">
         <div className="absolute inset-0">
@@ -158,6 +168,46 @@ const Results = () => {
             />
           ))}
         </div>
+        <div className="absolute inset-0">
+          <svg
+            className="opacity-20 w-full h-full"
+            viewBox="0 0 100 100"
+            preserveAspectRatio="none"
+          >
+            {/* Circuit board pattern */}
+            <pattern
+              id="circuit"
+              x="0"
+              y="0"
+              width="20"
+              height="20"
+              patternUnits="userSpaceOnUse"
+            >
+              <path
+                d="M0,0 L20,0 L20,20 L0,20 Z"
+                fill="none"
+                stroke="rgba(255,255,255,0.1)"
+                strokeWidth="0.5"
+              />
+              <circle cx="10" cy="10" r="1.5" fill="rgba(255,255,255,0.2)" />
+              <circle cx="0" cy="0" r="1" fill="rgba(255,255,255,0.2)" />
+              <circle cx="20" cy="20" r="1" fill="rgba(255,255,255,0.2)" />
+              <path
+                d="M10,0 L10,10 L20,10"
+                fill="none"
+                stroke="rgba(255,255,255,0.15)"
+                strokeWidth="0.5"
+              />
+              <path
+                d="M0,10 L10,10"
+                fill="none"
+                stroke="rgba(255,255,255,0.15)"
+                strokeWidth="0.5"
+              />
+            </pattern>
+            <rect width="100" height="100" fill="url(#circuit)" />
+          </svg>
+        </div>
       </div>
 
       <div className="relative z-10 container mx-auto px-4 py-12">
@@ -178,14 +228,14 @@ const Results = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
           >
-            <Card className="bg-slate-800/70 border-slate-700 h-full">
+            <Card className="bg-slate-800/70 border-slate-700 dark:bg-slate-900/50 dark:border-slate-800 h-full">
               <CardHeader>
-                <CardTitle className="flex items-center">
+                <CardTitle className="flex items-center text-white">
                   <ChartBar className="mr-2 h-5 w-5 text-brand-400" />
                   Performance by Domain
                 </CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className="text-white">
                 <div className="h-80">
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={barChartData}>
@@ -193,7 +243,7 @@ const Results = () => {
                       <XAxis dataKey="name" stroke="#94a3b8" />
                       <YAxis stroke="#94a3b8" />
                       <Tooltip 
-                        contentStyle={{ backgroundColor: "#1e293b", border: "1px solid #334155", borderRadius: "0.5rem" }}
+                        contentStyle={{ backgroundColor: "#1e293b", border: "1px solid #334155", borderRadius: "0.5rem", color: "white" }}
                       />
                       <Bar dataKey="score" fill="#8b5cf6" />
                     </BarChart>
@@ -208,9 +258,9 @@ const Results = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
           >
-            <Card className="bg-slate-800/70 border-slate-700 h-full">
+            <Card className="bg-slate-800/70 border-slate-700 dark:bg-slate-900/50 dark:border-slate-800 h-full">
               <CardHeader>
-                <CardTitle className="flex items-center">
+                <CardTitle className="flex items-center text-white">
                   <Brain className="mr-2 h-5 w-5 text-brand-400" />
                   Knowledge Distribution
                 </CardTitle>
@@ -235,7 +285,7 @@ const Results = () => {
                         ))}
                       </Pie>
                       <Tooltip 
-                        contentStyle={{ backgroundColor: "#1e293b", border: "1px solid #334155", borderRadius: "0.5rem" }}
+                        contentStyle={{ backgroundColor: "#1e293b", border: "1px solid #334155", borderRadius: "0.5rem", color: "white" }}
                       />
                     </PieChart>
                   </ResponsiveContainer>
@@ -251,46 +301,52 @@ const Results = () => {
           transition={{ delay: 0.4 }}
           className="mb-12"
         >
-          <Card className="bg-slate-800/70 border-slate-700">
+          <Card className="bg-slate-800/70 border-slate-700 dark:bg-slate-900/50 dark:border-slate-800">
             <CardHeader>
-              <CardTitle>Your Performance Summary</CardTitle>
+              <CardTitle className="text-white">Your Performance Summary</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {domains.map((domain, index) => (
+                {Object.entries(results || {}).map(([domain, score], index) => (
                   <div 
                     key={index} 
                     className={`p-6 rounded-lg border ${
-                      domain.score >= 70 
+                      score >= 70 
                         ? "bg-green-900/20 border-green-700/30" 
                         : "bg-red-900/20 border-red-700/30"
                     }`}
                   >
                     <div className="flex items-center mb-4">
                       <div className={`p-2 rounded-full mr-3 ${
-                        domain.score >= 70 ? "bg-green-900/50" : "bg-red-900/50"
+                        score >= 70 ? "bg-green-900/50" : "bg-red-900/50"
                       }`}>
-                        {domain.icon}
+                        {domain === 'dsa' ? <Code className="h-5 w-5" /> : 
+                         domain === 'os' ? <BookOpen className="h-5 w-5" /> : 
+                         <Network className="h-5 w-5" />}
                       </div>
-                      <h3 className="font-semibold">{domain.name}</h3>
+                      <h3 className="font-semibold">{
+                        domain === 'dsa' ? 'Data Structures & Algorithms' :
+                        domain === 'os' ? 'Operating Systems' :
+                        'Computer Networks'
+                      }</h3>
                     </div>
                     
                     <div className="mb-2 flex justify-between">
                       <span className="text-sm text-gray-400">Proficiency</span>
-                      <span className="font-mono font-medium">{domain.score}%</span>
+                      <span className="font-mono font-medium">{score}%</span>
                     </div>
                     <Progress 
-                      value={domain.score} 
+                      value={score} 
                       className={`h-2 mb-4 ${
-                        domain.score >= 70 ? "bg-green-900/30" : "bg-red-900/30"
+                        score >= 70 ? "bg-green-900/30" : "bg-red-900/30"
                       }`} 
                     />
                     
-                    {domain.weakPoints.length > 0 && (
+                    {score < 70 && (
                       <div className="mt-4">
                         <h4 className="text-sm font-medium mb-2 text-gray-300">Areas to Focus On:</h4>
                         <ul className="text-sm space-y-1 text-gray-400">
-                          {domain.weakPoints.map((point, i) => (
+                          {weakTopics[domain as Domain].map((point, i) => (
                             <li key={i} className="flex items-start">
                               <span className="mr-2">•</span>
                               <span>{point}</span>
@@ -312,9 +368,9 @@ const Results = () => {
           transition={{ delay: 0.5 }}
           className="mb-12"
         >
-          <Card className="bg-slate-800/70 border-slate-700">
+          <Card className="bg-slate-800/70 border-slate-700 dark:bg-slate-900/50 dark:border-slate-800">
             <CardHeader>
-              <CardTitle>Topic-Level Analysis</CardTitle>
+              <CardTitle className="text-white">Topic-Level Analysis</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="h-96">
@@ -330,7 +386,7 @@ const Results = () => {
                       fillOpacity={0.6}
                     />
                     <Tooltip 
-                      contentStyle={{ backgroundColor: "#1e293b", border: "1px solid #334155", borderRadius: "0.5rem" }}
+                      contentStyle={{ backgroundColor: "#1e293b", border: "1px solid #334155", borderRadius: "0.5rem", color: "white" }}
                     />
                   </RadarChart>
                 </ResponsiveContainer>
@@ -348,8 +404,12 @@ const Results = () => {
           <div className="p-6 bg-brand-600/20 rounded-lg border border-brand-500/30 mb-8 max-w-2xl mx-auto">
             <h3 className="text-xl font-semibold mb-4">Recommendations</h3>
             <p className="mb-4">
-              Based on your assessment, we recommend focusing on <strong>{weakestDomain.name}</strong> first, 
-              particularly on topics like {weakestDomain.weakPoints.join(", ")}.
+              Based on your assessment, we recommend focusing on <strong>{
+                weakestDomain.domain === 'dsa' ? 'Data Structures & Algorithms' :
+                weakestDomain.domain === 'os' ? 'Operating Systems' :
+                'Computer Networks'
+              }</strong> first, 
+              particularly on topics like {weakTopics[weakestDomain.domain as Domain].join(", ")}.
             </p>
             <Button 
               size="lg"
@@ -364,6 +424,7 @@ const Results = () => {
             <Button 
               variant="outline" 
               onClick={() => navigate("/dashboard")}
+              className="border-white/20 hover:bg-white/10 text-white"
             >
               Go to Dashboard
             </Button>
