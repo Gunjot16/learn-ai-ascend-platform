@@ -11,6 +11,9 @@ import ChatAI from "./pages/ChatAI";
 import Analytics from "./pages/Analytics";
 import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
+import LandingPage from "./pages/LandingPage";
+import Assessment from "./pages/Assessment";
+import Results from "./pages/Results";
 
 const queryClient = new QueryClient();
 
@@ -21,7 +24,10 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Dashboard />} />
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/assessment" element={<Assessment />} />
+          <Route path="/results" element={<Results />} />
+          <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/learning" element={<LearningPath />} />
           <Route path="/community" element={<Community />} />
           <Route path="/chat" element={<ChatAI />} />
