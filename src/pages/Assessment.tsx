@@ -118,7 +118,7 @@ const Assessment = () => {
         } else {
           // Find first unanswered question
           for (const domain of domains) {
-            const unansweredIndex = questions[domain].findIndex(q => !answers[q.id]?.trim().length > 0);
+            const unansweredIndex = questions[domain].findIndex(q => !(answers[q.id]?.trim().length > 0));
             if (unansweredIndex !== -1) {
               setCurrentDomain(domain);
               setCurrentQuestionIndex(unansweredIndex);

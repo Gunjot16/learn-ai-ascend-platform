@@ -173,6 +173,7 @@ const LearningPath = () => {
       duration: "26:12",
       thumbnail: "https://placehold.co/640x360/8b5cf6/FFFFFF/png?text=Sorting+Algorithms",
       difficulty: "Intermediate",
+      recommended: false,
       domain: "dsa",
       topic: "Sorting Algorithms"
     },
@@ -184,6 +185,7 @@ const LearningPath = () => {
       duration: "18:05",
       thumbnail: "https://placehold.co/640x360/4f46e5/FFFFFF/png?text=File+Systems",
       difficulty: "Intermediate",
+      recommended: false,
       domain: "os",
       topic: "File Systems"
     },
@@ -195,6 +197,7 @@ const LearningPath = () => {
       duration: "23:18",
       thumbnail: "https://placehold.co/640x360/6366f1/FFFFFF/png?text=Network+Security",
       difficulty: "Advanced",
+      recommended: false,
       domain: "cn",
       topic: "Network Security"
     }
